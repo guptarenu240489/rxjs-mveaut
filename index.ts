@@ -4,9 +4,13 @@ import { of, map, Observable } from 'rxjs';
 
 const observable$ = new Observable<number>((subscriber) => {
   let count = 1;
-  setInterval(() => {
+  const intervalId = setInterval(() => {
+    console.log('Emitted');
     subscriber.next(count++);
   }, 1000);
+  return () => {
+    clearInterval(intervalId);
+  };
 });
 
 const subscription = observable$.subscribe((val) => console.log(val));
