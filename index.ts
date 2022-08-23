@@ -11,7 +11,7 @@ of('World')
 const observable$ = new Observable((subsciber) => {
   console.log('Observable executed');
   subsciber.next('Ashish');
-  subsciber.next('Renu');
+  setTimeout(() => subsciber.next('Renu'), 2000);
   subsciber.next('Riya');
   // subsciber.error('Error occusred');
   // will not execute as after error occur, observableis complete and destroyed
@@ -25,4 +25,7 @@ const observer = {
 
 observable$.subscribe(observer);
 // will subscribe again and duplicate result will come
-observable$.subscribe(observer);
+setTimeout(() => {
+  console.log('observable 2 executed');
+  observable$.subscribe(observer);
+}, 1000);
