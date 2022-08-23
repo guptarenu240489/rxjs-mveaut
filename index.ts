@@ -1,18 +1,23 @@
-import './style.css';
+import { combineLatest, fromEvent } from 'rxjs';
 
-import { of, map, Observable, fromEvent } from 'rxjs';
-import { ajax } from 'rxjs/ajax';
-// Cold observable as each observable will make a seperate call and recievce different value
-const ajax$ = ajax<any>('https://random-data-api.com/api/v2/users');
-ajax$.subscribe((data) => console.log('Sub1', data.response.first_name));
-ajax$.subscribe((data) => console.log('Sub2', data.response.first_name));
-ajax$.subscribe((data) => console.log('Sub3', data.response.first_name));
+const temperatureInput = document.getElementById('temperature-input');
+const conversionDropdown = document.getElementById('conversion-dropdown');
+const resultText = document.getElementById('result-text');
 
-/// Hot Observable as both observable will recievce same value
+const temperatureInput$ = fromEvent(temperatureInput, 'input');
+const conversionDropdown$ = fromEvent(conversionDropdown, 'input');
 
-const btnClick$ = fromEvent(document.querySelector('button'), 'click');
-btnClick$.subscribe((val) => console.log('Sub1', val));
-
-setTimeout(() => {
-  btnClick$.subscribe((val) => console.log('Sub2', val));
-}, 5000);
+combineLatest([temperatureInput$, conversionDropdown$]).subscribe({
+  next: ([temperatureInput, conversionInput]) => {
+    const temperature = Number(temperatureInput.target['value']);
+    const conversion = conversionInput.target['value'];
+    console.log(conversion);
+    let result: number;
+    if (conversion === 'f-to-c') {
+      result = ((temperature - 32) * 5) / 9;
+    } else if (conversion === 'c-to-f') {
+      result = (temperature * 9) / 5 + 32;
+    }
+    resultText.innerHTML = String(result);
+  },
+});
