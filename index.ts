@@ -8,6 +8,7 @@ const observable$ = new Observable<number>((subscriber) => {
     console.log('Emitted');
     subscriber.next(count++);
   }, 1000);
+  // teardown to clear any cleanup to avoid casing memory leaks
   return () => {
     clearInterval(intervalId);
   };
