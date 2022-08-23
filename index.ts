@@ -1,21 +1,18 @@
 import './style.css';
 
-import { of, map, Observable } from 'rxjs';
+import { of, map, Observable, fromEvent } from 'rxjs';
+import { ajax } from 'rxjs/ajax';
+// Cold observable as each observable will make a seperate call and recievce different value
+const ajax$ = ajax<any>('https://random-data-api.com/api/v2/users');
+ajax$.subscribe((data) => console.log('Sub1', data.response.first_name));
+ajax$.subscribe((data) => console.log('Sub2', data.response.first_name));
+ajax$.subscribe((data) => console.log('Sub3', data.response.first_name));
 
-const observable$ = new Observable<number>((subscriber) => {
-  let count = 1;
-  const intervalId = setInterval(() => {
-    console.log('Emitted');
-    subscriber.next(count++);
-  }, 1000);
-  // teardown to clear any cleanup to avoid casing memory leaks
-  return () => {
-    clearInterval(intervalId);
-  };
-});
+/// Hot Observable as both observable will recievce same value
 
-const subscription = observable$.subscribe((val) => console.log(val));
+const btnClick$ = fromEvent(document.querySelector('button'), 'click');
+btnClick$.subscribe((val) => console.log('Sub1', val));
+
 setTimeout(() => {
-  console.log('Unsubscribe');
-  subscription.unsubscribe();
-}, 7000);
+  btnClick$.subscribe((val) => console.log('Sub2', val));
+}, 5000);
