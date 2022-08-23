@@ -11,5 +11,6 @@ const observable$ = new Observable<number>((subscriber) => {
 
 const subscription = observable$.subscribe((val) => console.log(val));
 setTimeout(() => {
+  console.log('Unsubscribe');
   subscription.unsubscribe();
 }, 7000);
